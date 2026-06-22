@@ -1,0 +1,20 @@
+---
+import { Image } from 'astro:assets';
+import imperialLogo from '../assets/imperial-logo.png';
+
+const basePath = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const flagUrl = (code: string) => `${basePath}flags/${code}.svg`;
+---
+
+<dialog class="language-dialog" id="language-dialog" aria-labelledby="language-title" aria-describedby="language-description">
+  <Image class="language-dialog__logo" src={imperialLogo} alt="Imperial Restaurant & Pizzeria" width={120} quality={84} />
+  <p class="eyebrow">Benvenuti · Bienvenue · Willkommen · Welcome</p>
+  <h2 id="language-title">Choose your language</h2>
+  <p id="language-description">Wählen Sie die Sprache für Ihren Besuch.</p>
+  <div class="language-dialog__choices">
+    <button type="button" data-language-choice="de"><img src={flagUrl('de')} alt="" /><span>Deutsch</span></button>
+    <button type="button" data-language-choice="fr"><img src={flagUrl('fr')} alt="" /><span>Français</span></button>
+    <button type="button" data-language-choice="it"><img src={flagUrl('it')} alt="" /><span>Italiano</span></button>
+    <button type="button" data-language-choice="en"><img src={flagUrl('gb')} alt="" /><span>English</span></button>
+  </div>
+</dialog>
