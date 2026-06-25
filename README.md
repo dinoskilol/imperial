@@ -17,7 +17,7 @@ Der Production-Build wird mit `npm run build` erzeugt und liegt anschließend in
 - Übersetzungen, Seitentexte, Events und Öffnungszeiten: `src/data/content.ts`
 - Design: `src/styles/global.css`
 - Bildmotive und Wappen: `src/assets/`
-- Downloadbare Speisekarte: `public/imperial-menu.pdf`
+- Downloadbare Speisekarte: `public/menu.pdf`
 - PDF-Generator: `scripts/generate_menu_pdf.py`
 
 Die Reservierungsanfrage öffnet eine voradressierte E-Mail. Die `.example`-Adressen müssen vor der Veröffentlichung ersetzt werden.

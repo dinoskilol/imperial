@@ -9,14 +9,13 @@ import menuOven from '../assets/real/a6a417e9-b1e3-47de-bef2-5dc06966f844.jpg';
 import galleryDetail from '../assets/real/3a07d28c-e66a-4303-8723-6190150e7310.jpg';
 import galleryDining from '../assets/real/43880e31-1864-474e-8a09-14d61e7000fd.jpg';
 import galleryCellar from '../assets/real/e12dddec-1fb1-4891-a99b-739488647598.jpg';
-import eventsRestaurant from '../assets/real/03de8193-4f05-4a84-af3d-2b536cc94212.jpg';
 import { content } from '../data/content';
 import { siteConfig } from '../data/site';
 
 const copy = content.de;
 const basePath = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const flagUrl = (code: string) => `${basePath}flags/${code}.svg`;
-const menuPdfUrl = `${basePath}imperial-menu.pdf`;
+const menuPdfUrl = `${basePath}menu.pdf`;
 const heroMobileSource = await getImage({ src: heroMobileRestaurant, width: 780, format: 'webp', quality: 88 });
 ---
 
@@ -31,7 +30,6 @@ const heroMobileSource = await getImage({ src: heroMobileRestaurant, width: 780,
     <nav class="desktop-nav" aria-label="Hauptnavigation">
       <a href="#about" data-i18n="nav.about">{copy.nav.about}</a>
       <a href="#menu" data-i18n="nav.menu">{copy.nav.menu}</a>
-      <a href="#events" data-i18n="nav.events">{copy.nav.events}</a>
       <a class="nav-cta" href="#reserve" data-i18n="nav.reserve">{copy.nav.reserve}</a>
     </nav>
 
@@ -51,7 +49,6 @@ const heroMobileSource = await getImage({ src: heroMobileRestaurant, width: 780,
     <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile Navigation" hidden>
       <a href="#about" data-i18n="nav.about">{copy.nav.about}</a>
       <a href="#menu" data-i18n="nav.menu">{copy.nav.menu}</a>
-      <a href="#events" data-i18n="nav.events">{copy.nav.events}</a>
       <a href="#reserve" data-i18n="nav.reserve">{copy.nav.reserve}</a>
       <div class="mobile-nav__languages" aria-label="Sprache wählen">
         <button class="is-active" type="button" data-language-switch="de" aria-pressed="true" aria-label="Deutsch"><img src={flagUrl('de')} alt="" /><span>DE</span></button>
@@ -152,32 +149,6 @@ const heroMobileSource = await getImage({ src: heroMobileRestaurant, width: 780,
       </div>
     </section>
 
-    <section class="events section" id="events" aria-labelledby="events-title">
-      <div class="events__backdrop" aria-hidden="true">
-        <Image src={eventsRestaurant} alt="" widths={[960, 1440, 1920]} sizes="100vw" quality={84} />
-      </div>
-      <div class="events__inner">
-        <div class="section-heading section-heading--light reveal">
-          <div>
-            <p class="eyebrow" data-i18n="events.eyebrow">{copy.events.eyebrow}</p>
-            <h2 id="events-title" data-i18n="events.title">{copy.events.title}</h2>
-          </div>
-          <p data-i18n="events.intro">{copy.events.intro}</p>
-        </div>
-        <div class="event-grid reveal" data-event-grid>
-          {copy.events.items.map((event) => (
-            <article class="event-card">
-              <div class="event-card__top"><span>{event.number}</span><span>{copy.events.recurring}</span></div>
-              <p class="event-card__date">{event.cadence}</p>
-              <h3>{event.title}</h3>
-              <p>{event.description}</p>
-              <a href="#reserve"><span>{copy.events.reserve}</span><span aria-hidden="true">↗</span></a>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-
     <section class="reservation section" id="reserve" aria-labelledby="reserve-title">
       <div class="reservation__intro reveal">
         <p class="eyebrow eyebrow--dark" data-i18n="reserve.eyebrow">{copy.reserve.eyebrow}</p>
@@ -257,7 +228,6 @@ const heroMobileSource = await getImage({ src: heroMobileRestaurant, width: 780,
       <h2 data-i18n="footer.navigation">{copy.footer.navigation}</h2>
       <a href="#about" data-i18n="nav.about">{copy.nav.about}</a>
       <a href="#menu" data-i18n="nav.menu">{copy.nav.menu}</a>
-      <a href="#events" data-i18n="nav.events">{copy.nav.events}</a>
       <a href="#reserve" data-i18n="nav.reserve">{copy.nav.reserve}</a>
     </div>
     <div>

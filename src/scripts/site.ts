@@ -17,38 +17,6 @@ function getNestedValue(source: LocalizedContent, path: string): string | undefi
   return typeof value === 'string' ? value : undefined;
 }
 
-function renderEvents(copy: LocalizedContent): void {
-  const grid = document.querySelector<HTMLElement>('[data-event-grid]');
-  if (!grid) return;
-  grid.replaceChildren(...copy.events.items.map((event) => {
-    const card = document.createElement('article');
-    card.className = 'event-card';
-    const top = document.createElement('div');
-    top.className = 'event-card__top';
-    const number = document.createElement('span');
-    number.textContent = event.number;
-    const recurring = document.createElement('span');
-    recurring.textContent = copy.events.recurring;
-    top.append(number, recurring);
-    const cadence = document.createElement('p');
-    cadence.className = 'event-card__date';
-    cadence.textContent = event.cadence;
-    const title = document.createElement('h3');
-    title.textContent = event.title;
-    const description = document.createElement('p');
-    description.textContent = event.description;
-    const link = document.createElement('a');
-    link.href = '#reserve';
-    const linkText = document.createElement('span');
-    linkText.textContent = copy.events.reserve;
-    const arrow = document.createElement('span');
-    arrow.setAttribute('aria-hidden', 'true');
-    arrow.textContent = '↗';
-    link.append(linkText, arrow);
-    card.append(top, cadence, title, description, link);
-    return card;
-  }));
-}
 
 function renderHours(copy: LocalizedContent): void {
   const list = document.querySelector<HTMLElement>('[data-hours-list]');
@@ -119,7 +87,6 @@ function setLanguage(language: Language, persist = true): void {
   const menuToggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   if (menuToggle) menuToggle.setAttribute('aria-label', copy.nav.open);
 
-  renderEvents(copy);
   renderHours(copy);
   updateGalleryControls();
 
