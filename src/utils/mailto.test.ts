@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildContactMailto, buildReservationMailto } from './mailto';
+import { buildReservationMailto } from './mailto';
 
 describe('mailto builders', () => {
   it('encodes a localized reservation request', () => {
@@ -16,17 +16,5 @@ describe('mailto builders', () => {
     expect(url).toContain('subject=Demande%20de%20r%C3%A9servation');
     expect(decodeURIComponent(url)).toContain('Personnes: 4');
     expect(decodeURIComponent(url)).toContain('Zoë Rossi');
-  });
-
-  it('encodes contact subjects and messages', () => {
-    const url = buildContactMailto('ciao@imperial.example', {
-      name: 'Luca',
-      email: 'luca@example.com',
-      subject: 'Private dinner & wine',
-      message: 'Buongiorno!',
-    });
-
-    expect(url).toContain('Private%20dinner%20%26%20wine');
-    expect(decodeURIComponent(url)).toContain('Buongiorno!');
   });
 });

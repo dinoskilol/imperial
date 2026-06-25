@@ -10,13 +10,6 @@ export interface ReservationValues {
   message: string;
 }
 
-export interface ContactValues {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-}
-
 const reservationSubjects: Record<Language, string> = {
   de: 'Reservierungsanfrage',
   fr: 'Demande de réservation',
@@ -50,10 +43,4 @@ export function buildReservationMailto(
   ].join('\n');
 
   return `mailto:${recipient}?subject=${encodeURIComponent(reservationSubjects[language])}&body=${encodeURIComponent(body)}`;
-}
-
-export function buildContactMailto(recipient: string, values: ContactValues): string {
-  const subject = values.subject || 'Imperial – Kontaktanfrage';
-  const body = `${values.name} <${values.email}>\n\n${values.message}`;
-  return `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }

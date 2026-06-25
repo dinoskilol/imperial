@@ -1,14 +1,15 @@
 ---
-import { Image } from 'astro:assets';
-import LanguageDialog from '../components/LanguageDialog.astro';
+import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import imperialLogo from '../assets/imperial-logo.png';
-import heroTerrace from '../assets/hero-terrace.png';
-import interior from '../assets/interior.png';
-import pasta from '../assets/pasta.png';
-import pizzaCraft from '../assets/pizza-craft.png';
-import tavolata from '../assets/tavolata.png';
-import tiramisu from '../assets/tiramisu.png';
+import heroRestaurant from '../assets/real/f0373e7a-dafc-4c29-8841-7ae743a942e3.jpg';
+import heroMobileRestaurant from '../assets/real/f2c06b97-a3a4-4d08-b9e9-6f777d8090a3.jpg';
+import aboutRestaurant from '../assets/real/5100bb98-5bf2-485f-b718-29cd9c28df16.jpg';
+import menuOven from '../assets/real/a6a417e9-b1e3-47de-bef2-5dc06966f844.jpg';
+import galleryDetail from '../assets/real/3a07d28c-e66a-4303-8723-6190150e7310.jpg';
+import galleryDining from '../assets/real/43880e31-1864-474e-8a09-14d61e7000fd.jpg';
+import galleryCellar from '../assets/real/e12dddec-1fb1-4891-a99b-739488647598.jpg';
+import eventsRestaurant from '../assets/real/03de8193-4f05-4a84-af3d-2b536cc94212.jpg';
 import { content } from '../data/content';
 import { siteConfig } from '../data/site';
 
@@ -16,6 +17,7 @@ const copy = content.de;
 const basePath = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const flagUrl = (code: string) => `${basePath}flags/${code}.svg`;
 const menuPdfUrl = `${basePath}imperial-menu.pdf`;
+const heroMobileSource = await getImage({ src: heroMobileRestaurant, width: 780, format: 'webp', quality: 88 });
 ---
 
 <BaseLayout title={copy.meta.title} description={copy.meta.description}>
@@ -40,6 +42,7 @@ const menuPdfUrl = `${basePath}imperial-menu.pdf`;
         <button type="button" data-language-switch="it" aria-pressed="false" aria-label="Italiano"><img src={flagUrl('it')} alt="" /></button>
         <button type="button" data-language-switch="en" aria-pressed="false" aria-label="English"><img src={flagUrl('gb')} alt="" /></button>
       </div>
+      <a class="mobile-reserve" href="#reserve" data-i18n="nav.reserve">{copy.nav.reserve}</a>
       <button class="menu-toggle" type="button" aria-controls="mobile-nav" aria-expanded="false" aria-label={copy.nav.open} data-menu-toggle>
         <span></span><span></span>
       </button>
@@ -50,18 +53,24 @@ const menuPdfUrl = `${basePath}imperial-menu.pdf`;
       <a href="#menu" data-i18n="nav.menu">{copy.nav.menu}</a>
       <a href="#events" data-i18n="nav.events">{copy.nav.events}</a>
       <a href="#reserve" data-i18n="nav.reserve">{copy.nav.reserve}</a>
+      <div class="mobile-nav__languages" aria-label="Sprache wählen">
+        <button class="is-active" type="button" data-language-switch="de" aria-pressed="true" aria-label="Deutsch"><img src={flagUrl('de')} alt="" /><span>DE</span></button>
+        <button type="button" data-language-switch="fr" aria-pressed="false" aria-label="Français"><img src={flagUrl('fr')} alt="" /><span>FR</span></button>
+        <button type="button" data-language-switch="it" aria-pressed="false" aria-label="Italiano"><img src={flagUrl('it')} alt="" /><span>IT</span></button>
+        <button type="button" data-language-switch="en" aria-pressed="false" aria-label="English"><img src={flagUrl('gb')} alt="" /><span>EN</span></button>
+      </div>
     </nav>
   </header>
 
   <main id="main">
     <section class="hero" id="top" aria-labelledby="hero-title">
       <div class="hero__backdrop" aria-hidden="true">
-        <Image src={heroTerrace} alt="" widths={[960, 1440, 1920]} sizes="100vw" quality={88} loading="eager" />
+        <picture>
+          <source media="(max-width: 800px)" srcset={heroMobileSource.src} />
+          <Image src={heroRestaurant} alt="" widths={[960, 1440, 1920]} sizes="100vw" quality={88} loading="eager" />
+        </picture>
       </div>
       <div class="hero__copy">
-        <div class="hero__logo-card">
-          <Image src={imperialLogo} alt="Imperial Restaurant & Pizzeria – Passione, Famiglia, Qualità" width={290} quality={90} loading="eager" />
-        </div>
         <p class="eyebrow" data-i18n="hero.eyebrow">{copy.hero.eyebrow}</p>
         <h1 id="hero-title" data-i18n="hero.title">{copy.hero.title}</h1>
         <p class="hero__intro" data-i18n="hero.subtitle">{copy.hero.subtitle}</p>
@@ -84,7 +93,7 @@ const menuPdfUrl = `${basePath}imperial-menu.pdf`;
 
     <section class="about section" id="about" aria-labelledby="about-title">
       <div class="about__image reveal">
-        <Image src={interior} alt="Elegantes Restaurant am Schweizer See bei Abenddämmerung" widths={[640, 960, 1280, 1800]} sizes="(max-width: 900px) 100vw, 58vw" quality={86} />
+        <Image src={aboutRestaurant} alt="Blick durch den Weineingang in den Gastraum des Imperial" widths={[480, 720, 960, 1280]} sizes="(max-width: 800px) 100vw, 50vw" quality={86} />
         <div class="image-note"><span>46° N</span><span>Swiss Italian</span></div>
       </div>
       <div class="about__copy reveal">
@@ -97,40 +106,19 @@ const menuPdfUrl = `${basePath}imperial-menu.pdf`;
     </section>
 
     <section class="menu section" id="menu" aria-labelledby="menu-title">
-      <div class="section-heading reveal">
-        <div>
-          <p class="eyebrow eyebrow--dark" data-i18n="menu.eyebrow">{copy.menu.eyebrow}</p>
-          <h2 id="menu-title" data-i18n="menu.title">{copy.menu.title}</h2>
+      <div class="menu__feature">
+        <div class="menu__photo reveal">
+          <Image src={menuOven} alt="Holzbefeuerter Pizzaofen in der Küche des Imperial" widths={[640, 960, 1280]} sizes="(max-width: 800px) 100vw, 58vw" quality={88} />
+          <span class="menu__photo-label">Fatto a mano</span>
         </div>
-        <div class="section-heading__aside">
+        <div class="menu__panel reveal">
+          <p class="eyebrow" data-i18n="menu.eyebrow">{copy.menu.eyebrow}</p>
+          <h2 id="menu-title" data-i18n="menu.title">{copy.menu.title}</h2>
           <p data-i18n="menu.intro">{copy.menu.intro}</p>
-          <a class="button button--outline" href={menuPdfUrl} download="Imperial-Speisekarte.pdf">
+          <a class="button button--gold" href={menuPdfUrl} download="Imperial-Speisekarte.pdf">
             <span data-i18n="menu.download">{copy.menu.download}</span>
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14" /></svg>
           </a>
-        </div>
-      </div>
-
-      <div class="menu__layout reveal">
-        <div class="menu__photo">
-          <Image src={pasta} alt="Hausgemachte Tagliolini mit Salbei, Parmesan und Trüffel" widths={[480, 720, 960]} sizes="(max-width: 800px) 100vw, 38vw" quality={88} />
-          <span class="menu__photo-label">Fatto a mano</span>
-        </div>
-        <div class="menu__content">
-          <div class="menu-tabs" role="tablist" aria-label="Menükategorien" data-menu-tabs>
-            {copy.menu.categories.map((category, index) => (
-              <button type="button" role="tab" aria-selected={index === 0 ? 'true' : 'false'} class={index === 0 ? 'is-active' : ''} data-category={category.id}>{category.label}</button>
-            ))}
-          </div>
-          <div class="dish-list" data-dish-list aria-live="polite">
-            {copy.menu.categories[0].dishes.map((dish) => (
-              <article class="dish">
-                <div class="dish__heading"><h3>{dish.name}</h3><span>CHF {dish.price}</span></div>
-                <p>{dish.description}</p>
-                {dish.vegetarian && <span class="veg-mark">● {copy.menu.vegetarian}</span>}
-              </article>
-            ))}
-          </div>
         </div>
       </div>
     </section>
@@ -143,25 +131,30 @@ const menuPdfUrl = `${basePath}imperial-menu.pdf`;
         </div>
         <p data-i18n="gallery.intro">{copy.gallery.intro}</p>
       </div>
-      <div class="gallery__grid reveal">
-        <figure class="gallery-card gallery-card--portrait">
-          <Image src={pizzaCraft} alt="Pizzaiolo formt von Hand einen Pizzateig vor dem Holzofen" widths={[480, 720, 960]} sizes="(max-width: 800px) 78vw, 29vw" quality={86} />
+      <div class="gallery__grid reveal" data-gallery-grid>
+        <figure class="gallery-card gallery-card--detail">
+          <Image src={galleryDetail} alt="Weinfass und italienische Details im Imperial" widths={[480, 720, 960]} sizes="(max-width: 800px) 78vw, 29vw" quality={86} />
           <figcaption><span>01</span><span data-i18n="gallery.items.0">{copy.gallery.items[0]}</span></figcaption>
         </figure>
         <figure class="gallery-card gallery-card--wide">
-          <Image src={tavolata} alt="Festlich gedeckte italienische Tavolata im warmen Kerzenlicht" widths={[640, 960, 1280]} sizes="(max-width: 800px) 78vw, 40vw" quality={86} />
+          <Image src={galleryDining} alt="Einladender Gastraum mit gedeckten Tischen im Imperial" widths={[640, 960, 1280]} sizes="(max-width: 800px) 78vw, 40vw" quality={86} />
           <figcaption><span>02</span><span data-i18n="gallery.items.1">{copy.gallery.items[1]}</span></figcaption>
         </figure>
-        <figure class="gallery-card gallery-card--dessert">
-          <Image src={tiramisu} alt="Hausgemachtes Tiramisù mit Espresso und goldenem Löffel" widths={[480, 720, 960]} sizes="(max-width: 800px) 78vw, 29vw" quality={86} />
+        <figure class="gallery-card gallery-card--cellar">
+          <Image src={galleryCellar} alt="Italienische Weine im Weinkeller des Imperial" widths={[480, 720, 960]} sizes="(max-width: 800px) 78vw, 29vw" quality={86} />
           <figcaption><span>03</span><span data-i18n="gallery.items.2">{copy.gallery.items[2]}</span></figcaption>
         </figure>
+      </div>
+      <div class="gallery-controls" data-gallery-controls>
+        <button type="button" data-gallery-previous data-i18n-label="gallery.previous" aria-label={copy.gallery.previous}><span aria-hidden="true">←</span></button>
+        <p aria-live="polite"><span data-i18n="gallery.counter">{copy.gallery.counter}</span> <span data-gallery-status>1 / 3</span></p>
+        <button type="button" data-gallery-next data-i18n-label="gallery.next" aria-label={copy.gallery.next}><span aria-hidden="true">→</span></button>
       </div>
     </section>
 
     <section class="events section" id="events" aria-labelledby="events-title">
       <div class="events__backdrop" aria-hidden="true">
-        <Image src={tavolata} alt="" widths={[960, 1440, 1920]} sizes="100vw" quality={84} />
+        <Image src={eventsRestaurant} alt="" widths={[960, 1440, 1920]} sizes="100vw" quality={84} />
       </div>
       <div class="events__inner">
         <div class="section-heading section-heading--light reveal">
@@ -231,46 +224,27 @@ const menuPdfUrl = `${basePath}imperial-menu.pdf`;
 
     <section class="contact section" id="contact" aria-labelledby="contact-title">
       <div class="contact__details reveal">
-        <p class="eyebrow" data-i18n="contact.eyebrow">{copy.contact.eyebrow}</p>
-        <h2 id="contact-title" data-i18n="contact.title">{copy.contact.title}</h2>
-        <p data-i18n="contact.intro">{copy.contact.intro}</p>
-
-        <div class="contact-list">
-          <div><span data-i18n="contact.address">{copy.contact.address}</span><a href="#">{siteConfig.address}</a></div>
-          <div><span data-i18n="contact.phone">{copy.contact.phone}</span><a href={`tel:${siteConfig.phoneHref}`}>{siteConfig.phoneDisplay}</a></div>
-          <div><span data-i18n="contact.email">{copy.contact.email}</span><a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a></div>
+        <div class="contact__heading">
+          <div>
+            <p class="eyebrow" data-i18n="contact.eyebrow">{copy.contact.eyebrow}</p>
+            <h2 id="contact-title" data-i18n="contact.title">{copy.contact.title}</h2>
+          </div>
+          <p data-i18n="contact.intro">{copy.contact.intro}</p>
         </div>
-
-        <div class="hours">
-          <h3 data-i18n="contact.hours">{copy.contact.hours}</h3>
-          <div data-hours-list>
-            {copy.contact.hoursRows.map(([day, time]) => <p><span>{day}</span><span>{time}</span></p>)}
+        <div class="contact__grid">
+          <div class="contact-list">
+            <div><span data-i18n="contact.address">{copy.contact.address}</span><address>{siteConfig.address}</address></div>
+            <div><span data-i18n="contact.phone">{copy.contact.phone}</span><a href={`tel:${siteConfig.phoneHref}`}>{siteConfig.phoneDisplay}</a></div>
+            <div><span data-i18n="contact.email">{copy.contact.email}</span><a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a></div>
+          </div>
+          <div class="hours">
+            <h3 data-i18n="contact.hours">{copy.contact.hours}</h3>
+            <div data-hours-list>
+              {copy.contact.hoursRows.map(([day, time]) => <p><span>{day}</span><span>{time}</span></p>)}
+            </div>
           </div>
         </div>
       </div>
-
-      <form class="contact-form reveal" id="contact-form">
-        <div class="field">
-          <label for="contact-name" data-i18n="contact.fields.name">{copy.contact.fields.name}</label>
-          <input id="contact-name" name="name" type="text" required autocomplete="name" placeholder={copy.contact.placeholders.name} data-placeholder="contact.placeholders.name" />
-        </div>
-        <div class="field">
-          <label for="contact-email" data-i18n="contact.fields.email">{copy.contact.fields.email}</label>
-          <input id="contact-email" name="email" type="email" required autocomplete="email" placeholder={copy.contact.placeholders.email} data-placeholder="contact.placeholders.email" />
-        </div>
-        <div class="field field--wide">
-          <label for="contact-subject" data-i18n="contact.fields.subject">{copy.contact.fields.subject}</label>
-          <input id="contact-subject" name="subject" type="text" required placeholder={copy.contact.placeholders.subject} data-placeholder="contact.placeholders.subject" />
-        </div>
-        <div class="field field--wide">
-          <label for="contact-message" data-i18n="contact.fields.message">{copy.contact.fields.message}</label>
-          <textarea id="contact-message" name="message" rows="5" required placeholder={copy.contact.placeholders.message} data-placeholder="contact.placeholders.message"></textarea>
-        </div>
-        <div class="form-submit field--wide">
-          <button class="button button--gold" type="submit"><span data-i18n="contact.submit">{copy.contact.submit}</span><span aria-hidden="true">↗</span></button>
-          <p class="form-status" data-contact-status aria-live="polite"></p>
-        </div>
-      </form>
     </section>
   </main>
 
@@ -295,8 +269,6 @@ const menuPdfUrl = `${basePath}imperial-menu.pdf`;
     <a class="back-to-top" href="#top"><span data-i18n="footer.top">{copy.footer.top}</span><span aria-hidden="true">↑</span></a>
     <p class="footer-demo" data-i18n="footer.demo">{copy.footer.demo}</p>
   </footer>
-
-  <LanguageDialog />
 
   <script>
     import '../scripts/site';

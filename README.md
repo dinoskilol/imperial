@@ -14,13 +14,13 @@ Der Production-Build wird mit `npm run build` erzeugt und liegt anschließend in
 ## Inhalte anpassen
 
 - Kontaktdaten und Adresse: `src/data/site.ts`
-- Übersetzungen, Speisekarte, Events und Öffnungszeiten: `src/data/content.ts`
+- Übersetzungen, Seitentexte, Events und Öffnungszeiten: `src/data/content.ts`
 - Design: `src/styles/global.css`
 - Bildmotive und Wappen: `src/assets/`
 - Downloadbare Speisekarte: `public/imperial-menu.pdf`
 - PDF-Generator: `scripts/generate_menu_pdf.py`
 
-Die Formularaktionen öffnen eine voradressierte E-Mail. Die `.example`-Adressen müssen vor der Veröffentlichung ersetzt werden.
+Die Reservierungsanfrage öffnet eine voradressierte E-Mail. Die `.example`-Adressen müssen vor der Veröffentlichung ersetzt werden.
 
 ## GitHub Pages
 

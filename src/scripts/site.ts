@@ -1,10 +1,11 @@
 import { content, isLanguage, type Language, type LocalizedContent } from '../data/content';
 import { siteConfig } from '../data/site';
-import { buildContactMailto, buildReservationMailto } from '../utils/mailto';
+import { resolveInitialLanguage } from '../utils/language';
+import { buildReservationMailto } from '../utils/mailto';
 
 const STORAGE_KEY = 'imperial.language.v1';
 let currentLanguage: Language = 'de';
-let activeCategory = content.de.menu.categories[0].id;
+let activeGalleryIndex = 0;
 
 function getNestedValue(source: LocalizedContent, path: string): string | undefined {
   const value = path.split('.').reduce<unknown>((accumulator, key) => {
@@ -14,46 +15,6 @@ function getNestedValue(source: LocalizedContent, path: string): string | undefi
     return undefined;
   }, source);
   return typeof value === 'string' ? value : undefined;
-}
-
-function renderMenu(copy: LocalizedContent): void {
-  const category = copy.menu.categories.find((item) => item.id === activeCategory) ?? copy.menu.categories[0];
-  activeCategory = category.id;
-
-  document.querySelectorAll<HTMLButtonElement>('[data-category]').forEach((button) => {
-    const localizedCategory = copy.menu.categories.find((item) => item.id === button.dataset.category);
-    if (localizedCategory) button.textContent = localizedCategory.label;
-    const active = button.dataset.category === activeCategory;
-    button.classList.toggle('is-active', active);
-    button.setAttribute('aria-selected', String(active));
-  });
-
-  const list = document.querySelector<HTMLElement>('[data-dish-list]');
-  if (!list) return;
-  list.replaceChildren(...category.dishes.map((dish) => {
-    const article = document.createElement('article');
-    article.className = 'dish';
-
-    const heading = document.createElement('div');
-    heading.className = 'dish__heading';
-    const title = document.createElement('h3');
-    title.textContent = dish.name;
-    const price = document.createElement('span');
-    price.textContent = `CHF ${dish.price}`;
-    heading.append(title, price);
-
-    const description = document.createElement('p');
-    description.textContent = dish.description;
-    article.append(heading, description);
-
-    if (dish.vegetarian) {
-      const marker = document.createElement('span');
-      marker.className = 'veg-mark';
-      marker.textContent = `● ${copy.menu.vegetarian}`;
-      article.append(marker);
-    }
-    return article;
-  }));
 }
 
 function renderEvents(copy: LocalizedContent): void {
@@ -103,6 +64,23 @@ function renderHours(copy: LocalizedContent): void {
   }));
 }
 
+function updateGalleryControls(): void {
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.gallery-card'));
+  const previous = document.querySelector<HTMLButtonElement>('[data-gallery-previous]');
+  const next = document.querySelector<HTMLButtonElement>('[data-gallery-next]');
+  const status = document.querySelector<HTMLElement>('[data-gallery-status]');
+  if (!cards.length || !previous || !next || !status) return;
+
+  activeGalleryIndex = Math.max(0, Math.min(activeGalleryIndex, cards.length - 1));
+  previous.disabled = activeGalleryIndex === 0;
+  next.disabled = activeGalleryIndex === cards.length - 1;
+  status.textContent = `${activeGalleryIndex + 1} / ${cards.length}`;
+  status.parentElement?.setAttribute(
+    'aria-label',
+    `${content[currentLanguage].gallery.counter} ${activeGalleryIndex + 1} / ${cards.length}`,
+  );
+}
+
 function setLanguage(language: Language, persist = true): void {
   currentLanguage = language;
   const copy = content[language];
@@ -116,6 +94,13 @@ function setLanguage(language: Language, persist = true): void {
     if (!key) return;
     const value = getNestedValue(copy, key);
     if (value) element.textContent = value;
+  });
+
+  document.querySelectorAll<HTMLElement>('[data-i18n-label]').forEach((element) => {
+    const key = element.dataset.i18nLabel;
+    if (!key) return;
+    const value = getNestedValue(copy, key);
+    if (value) element.setAttribute('aria-label', value);
   });
 
   document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[data-placeholder]').forEach((element) => {
@@ -134,24 +119,15 @@ function setLanguage(language: Language, persist = true): void {
   const menuToggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   if (menuToggle) menuToggle.setAttribute('aria-label', copy.nav.open);
 
-  renderMenu(copy);
   renderEvents(copy);
   renderHours(copy);
+  updateGalleryControls();
 
   if (persist) localStorage.setItem(STORAGE_KEY, language);
-  document.querySelector<HTMLDialogElement>('#language-dialog')?.close();
 }
 
 function setupLanguage(): void {
-  const dialog = document.querySelector<HTMLDialogElement>('#language-dialog');
   const storedLanguage = localStorage.getItem(STORAGE_KEY);
-
-  document.querySelectorAll<HTMLButtonElement>('[data-language-choice]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const value = button.dataset.languageChoice ?? null;
-      if (isLanguage(value)) setLanguage(value);
-    });
-  });
 
   document.querySelectorAll<HTMLButtonElement>('[data-language-switch]').forEach((button) => {
     button.addEventListener('click', () => {
@@ -160,23 +136,8 @@ function setupLanguage(): void {
     });
   });
 
-  if (dialog) dialog.addEventListener('cancel', (event) => event.preventDefault());
-
-  if (isLanguage(storedLanguage)) {
-    setLanguage(storedLanguage, false);
-  } else if (dialog && !dialog.open) {
-    dialog.showModal();
-  }
-}
-
-function setupMenuTabs(): void {
-  document.querySelectorAll<HTMLButtonElement>('[data-category]').forEach((button) => {
-    button.addEventListener('click', () => {
-      if (!button.dataset.category) return;
-      activeCategory = button.dataset.category;
-      renderMenu(content[currentLanguage]);
-    });
-  });
+  const initialLanguage = resolveInitialLanguage(storedLanguage, navigator.languages.length ? navigator.languages : navigator.language);
+  setLanguage(initialLanguage, !isLanguage(storedLanguage));
 }
 
 function setupMobileMenu(): void {
@@ -198,7 +159,44 @@ function setupMobileMenu(): void {
     toggle.setAttribute('aria-label', opening ? content[currentLanguage].nav.close : content[currentLanguage].nav.open);
     document.body.classList.toggle('nav-open', opening);
   });
-  nav.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
+  nav.querySelectorAll('a, [data-language-switch]').forEach((control) => control.addEventListener('click', close));
+}
+
+function setupGallery(): void {
+  const grid = document.querySelector<HTMLElement>('[data-gallery-grid]');
+  const previous = document.querySelector<HTMLButtonElement>('[data-gallery-previous]');
+  const next = document.querySelector<HTMLButtonElement>('[data-gallery-next]');
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.gallery-card'));
+  if (!grid || !previous || !next || !cards.length) return;
+
+  const scrollToCard = (index: number): void => {
+    activeGalleryIndex = Math.max(0, Math.min(index, cards.length - 1));
+    const target = cards[activeGalleryIndex];
+    grid.style.scrollSnapType = 'none';
+    grid.style.scrollBehavior = 'auto';
+    grid.scrollLeft = target.offsetLeft;
+    grid.style.scrollBehavior = '';
+    grid.style.scrollSnapType = '';
+    updateGalleryControls();
+  };
+
+  previous.addEventListener('click', () => scrollToCard(activeGalleryIndex - 1));
+  next.addEventListener('click', () => scrollToCard(activeGalleryIndex + 1));
+
+  let frame = 0;
+  grid.addEventListener('scroll', () => {
+    window.cancelAnimationFrame(frame);
+    frame = window.requestAnimationFrame(() => {
+      activeGalleryIndex = cards.reduce((closestIndex, card, index) => {
+        const closestDistance = Math.abs(cards[closestIndex].offsetLeft - grid.offsetLeft - grid.scrollLeft);
+        const distance = Math.abs(card.offsetLeft - grid.offsetLeft - grid.scrollLeft);
+        return distance < closestDistance ? index : closestIndex;
+      }, 0);
+      updateGalleryControls();
+    });
+  }, { passive: true });
+
+  updateGalleryControls();
 }
 
 function setupForms(): void {
@@ -223,18 +221,6 @@ function setupForms(): void {
     window.location.href = url;
   });
 
-  const contactForm = document.querySelector<HTMLFormElement>('#contact-form');
-  contactForm?.addEventListener('submit', (event) => {
-    event.preventDefault();
-    if (!contactForm.reportValidity()) return;
-    const values = Object.fromEntries(new FormData(contactForm).entries());
-    const url = buildContactMailto(siteConfig.contactEmail, {
-      name: String(values.name ?? ''), email: String(values.email ?? ''), subject: String(values.subject ?? ''), message: String(values.message ?? ''),
-    });
-    const status = document.querySelector<HTMLElement>('[data-contact-status]');
-    if (status) status.textContent = content[currentLanguage].contact.status;
-    window.location.href = url;
-  });
 }
 
 function setupReveals(): void {
@@ -264,8 +250,8 @@ function setupHeader(): void {
 }
 
 setupLanguage();
-setupMenuTabs();
 setupMobileMenu();
+setupGallery();
 setupForms();
 setupReveals();
 setupHeader();
