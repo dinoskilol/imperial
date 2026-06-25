@@ -112,7 +112,7 @@ const heroMobileSource = await getImage({ src: heroMobileRestaurant, width: 780,
           <p class="eyebrow" data-i18n="menu.eyebrow">{copy.menu.eyebrow}</p>
           <h2 id="menu-title" data-i18n="menu.title">{copy.menu.title}</h2>
           <p data-i18n="menu.intro">{copy.menu.intro}</p>
-          <a class="button button--gold" href={menuPdfUrl} download="Imperial-Speisekarte.pdf">
+          <a class="button button--gold" href={menuPdfUrl} target="_blank" rel="noopener">
             <span data-i18n="menu.download">{copy.menu.download}</span>
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14" /></svg>
           </a>
