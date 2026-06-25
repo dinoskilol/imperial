@@ -64,7 +64,7 @@ export const content: Record<Language, LocalizedContent> = {
       eyebrow: 'La nostra cucina',
       title: 'Unsere Speisekarte',
       intro: 'Unsere aktuelle Speisekarte steht Ihnen als PDF zum Herunterladen bereit.',
-      download: 'Speisekarte herunterladen',
+      download: 'Speisekarte öffnen',
     },
     events: {
       eyebrow: 'Insieme', title: 'Abende, die man teilt',
@@ -118,7 +118,7 @@ export const content: Record<Language, LocalizedContent> = {
     menu: {
       eyebrow: 'La nostra cucina', title: 'Notre carte',
       intro: 'Notre carte actuelle est disponible au téléchargement au format PDF.',
-      download: 'Télécharger la carte',
+      download: 'Ouvrir la carte',
     },
     events: {
       eyebrow: 'Insieme', title: 'Des soirées à partager',
@@ -167,7 +167,7 @@ export const content: Record<Language, LocalizedContent> = {
     menu: {
       eyebrow: 'La nostra cucina', title: 'Il nostro menu',
       intro: 'Il nostro menu attuale è disponibile per il download in formato PDF.',
-      download: 'Scarica il menu',
+      download: 'Apri il menu',
     },
     events: {
       eyebrow: 'Insieme', title: 'Serate da condividere', intro: 'Appuntamenti di gusto per lunghe tavolate, nuove scoperte e piccole tradizioni.', recurring: 'Ricorrente', reserve: 'Richiedi un posto',
@@ -215,7 +215,7 @@ export const content: Record<Language, LocalizedContent> = {
     menu: {
       eyebrow: 'La nostra cucina', title: 'Our menu',
       intro: 'Our current menu is available to download as a PDF.',
-      download: 'Download the menu',
+      download: 'Open the menu',
     },
     events: {
       eyebrow: 'Insieme', title: 'Evenings made to share', intro: 'Recurring moments for long tables, new discoveries and little traditions.', recurring: 'Recurring', reserve: 'Request a seat',

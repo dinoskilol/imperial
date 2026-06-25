@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { content } from '../data/content';
+
+const copy = content.de;
+const basePath = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const menuPdfUrl = `${basePath}menu.pdf`;
+---
+
+<BaseLayout title={`${copy.menu.title} | Imperial`} description={copy.meta.description}>
+  <main class="menu-viewer">
+    <header class="menu-viewer__bar">
+      <a class="menu-viewer__back" href={basePath}>Imperial</a>
+      <a class="button button--gold" href={menuPdfUrl}>PDF öffnen</a>
+    </header>
+    <iframe class="menu-viewer__frame" src={menuPdfUrl} title={copy.menu.title}></iframe>
+  </main>
+</BaseLayout>
